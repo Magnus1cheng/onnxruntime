@@ -58,5 +58,29 @@ Status GemmInt8(int m, int n, int k,
       CUBLAS_GEMM_DFALT));
   return Status::OK();
 }
+
+Status GemmUInt8(int m, int n, int k,
+                float alpha, float beta,
+                const float* a, int lda, const float* b, int ldb, float* c, int ldc,
+                const CudaKernel* cuda_kernel) {
+  ORT_ENFORCE(a != nullptr && b != nullptr && c != nullptr, "input matrix should not be null");
+  ORT_ENFORCE(cuda_kernel != nullptr, "kernel is null");
+  ORT_ENFORCE(k == lda && n == ldb && ldc == n, "!!!!!!!!lda ldb ldc != mn");
+  cudaStream_t stream = cuda_kernel->Stream();
+  cublasHandle_t cublas = cuda_kernel->CublasHandle();
+  cublasSetStream(cublas, stream);
+  CUBLAS_RETURN_IF_ERROR(cublasGemmEx(
+      cublas,
+      CUBLAS_OP_N, CUBLAS_OP_N,
+      n, m, k,
+      &alpha,
+      b, CUDA_R_32F, ldb, //ldb_aligned
+      a, CUDA_R_32F, lda, //lda_aligned
+      &beta,
+      c, CUDA_R_32F, ldc, CUDA_R_32F,
+      CUBLAS_GEMM_DFALT));
+  return Status::OK();
+}
+
 }  // namespace cuda
 }  // namespace onnxruntime

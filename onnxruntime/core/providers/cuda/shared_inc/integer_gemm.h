@@ -19,5 +19,18 @@ Status GemmInt8(int m,
                 int32_t* c,
                 int ldc,
                 const CudaKernel* cuda_kernel);
+
+Status GemmUInt8(int m,
+                int n,
+                int k,
+                float alpha_matmul,
+                float beta_matmul,
+                const float* a,
+                int lda,
+                const float* b,
+                int ldb,
+                float* c,
+                int ldc,
+                const CudaKernel* cuda_kernel);
 }
 }

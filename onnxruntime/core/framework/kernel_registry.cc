@@ -8,6 +8,8 @@
 #include <unordered_map>
 
 #include "core/framework/session_state.h"
+#include <iostream>
+#include <string>
 
 namespace onnxruntime {
 
@@ -32,9 +34,9 @@ bool TraverseFormalParametersWithTypeProto(const Node& node,
                                            TraverseFn traverse_fn) {
   const ONNX_NAMESPACE::OpSchema& op_schema = *node.Op();
 
-  // was the param name matched in either inputs, outputs or type constraints. 
+  // was the param name matched in either inputs, outputs or type constraints.
   // this validates the name was valid and that the type involved will be returned if available.
-  // if the name is invalid we do not return a type, and any applicable type constraint can not be applied 
+  // if the name is invalid we do not return a type, and any applicable type constraint can not be applied
   // in VerifyKernelDef.
   bool matched = false;
 
@@ -245,6 +247,7 @@ bool KernelRegistry::VerifyKernelDef(const Node& node,
         const char* actual_type_str = DataTypeImpl::ToString(DataTypeImpl::TypeFromProto(*actual_type));
         ostr << " but the node in the model has the following type (" << actual_type_str << ")";
         error_str = ostr.str();
+        std::cout<< error_str << std::endl;
         return false;
       }
     }
